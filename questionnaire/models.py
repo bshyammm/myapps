@@ -19,6 +19,7 @@ class Question(models.Model):
     question = models.CharField("Question Text", max_length=250)
     question_type = models.CharField("Question Type", max_length=250, choices = choices)
     position = models.IntegerField("Question Position", default=0)
+    required = models.NullBooleanField()
     active = models.NullBooleanField()
 
     def __str__(self):
