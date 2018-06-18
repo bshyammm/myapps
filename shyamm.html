@@ -1,0 +1,207 @@
+<html>
+<head>
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<!------ Include the above in your HEAD tag ---------->
+
+<body>
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+    	<div class="col-md-12 table-responsive">
+			<table class="table table-bordered table-hover table-sortable" id="tab_logic">
+				<thead>
+					<tr >
+						<th class="text-center">
+							Question Description
+						</th>
+						<th class="text-center col-xs-2">
+							Type
+						</th>
+						<th class="text-center col-xs-2">
+							Position
+						</th>
+						<th class="text-center col-xs-2">
+							Add Options
+						</th>
+        				<th class="text-center col-xs-2" 
+        				style="border-top: 1px solid #ffffff; 
+        				border-right: 1px solid #ffffff;">
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+    				<tr id='addr0' data-id="0" class="hidden">
+						<td data-name="question">
+						    <textarea name="question0" placeholder="Enter your question here"
+						    class="form-control"></textarea>
+						</td>
+						<td data-name="QuestionType">
+						    <select name="sel0" class="form-control input-sm">
+    					        <option value"0">Free Text</option>
+        				        <option value"1">Single Choice</option>
+        				        <option value"2">Multi Choice</option>
+						    </select>
+						</td>
+						<td data-name="pos">
+						    <input type="text" name='pos0' 
+						    placeholder='Position' 
+						    class="form-control"/>
+						</td>
+						<td data-name="add">
+						        <div id="field">
+                                    <input type="hidden" name="count" value="1" />
+						            <input class="input-append" id="option1" name="option1" type="text" 
+						            placeholder="Add choice" 
+						            data-items="8"/>
+						            <button id="b1" 
+						            class="btn add-more" type="button">+</button>
+                            </div>
+						</td>
+                        <td data-name="del">
+                            <div class="input-sm">
+                                <button nam"del0" 
+                                class='btn btn-danger glyphicon 
+                                glyphicon-remove row-remove'></button>
+                            </div>
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<a id="add_row" class="btn btn-default pull-right">Add Question</a>
+</div>
+
+<script>
+$(document).ready(function() {
+    $("#add_row").on("click", function() {
+        // Dynamic Rows Code
+        
+        // Get max row id and set new id
+        var newid = 0;
+        $.each($("#tab_logic tr"), function() {
+            if (parseInt($(this).data("id")) > newid) {
+                newid = parseInt($(this).data("id"));
+            }
+        });
+        newid++;
+        
+        var tr = $("<tr></tr>", {
+            id: "addr"+newid,
+            "data-id": newid
+        });
+        
+        // loop through each td and create new elements with name of newid
+        $.each($("#tab_logic tbody tr:nth(0) td"), function() {
+            var cur_td = $(this);
+            
+            var children = cur_td.children();
+            
+            // add new td and element if it has a nane
+            if ($(this).data("name") != undefined) {
+                var td = $("<td></td>", {
+                    "data-name": $(cur_td).data("name")
+                });
+                
+                var c = $(cur_td).find($(children[0]).prop('tagName')).clone().val("");
+                c.attr("name", $(cur_td).data("name") + newid);
+                c.appendTo($(td));
+                td.appendTo($(tr));
+            } else {
+                var td = $("<td></td>", {
+                    'text': $('#tab_logic tr').length
+                }).appendTo($(tr));
+            }
+        });
+        
+        // add delete button and td
+        /*
+        $("<td></td>").append(
+            $("<button class='btn btn-danger glyphicon glyphicon-remove row-remove'></button>")
+                .click(function() {
+                    $(this).closest("tr").remove();
+                })
+        ).appendTo($(tr));
+        */
+        
+        // add the new row
+        $(tr).appendTo($('#tab_logic'));
+        
+        $(tr).find("td button.row-remove").on("click", function() {
+             $(this).closest("tr").remove();
+        });
+});
+
+
+
+
+    // Sortable Code
+    var fixHelperModified = function(e, tr) {
+        var $originals = tr.children();
+        var $helper = tr.clone();
+    
+        $helper.children().each(function(index) {
+            $(this).width($originals.eq(index).width())
+        });
+        
+        return $helper;
+    };
+  
+    $(".table-sortable tbody").sortable({
+        helper: fixHelperModified      
+    }).disableSelection();
+
+    $(".table-sortable thead").disableSelection();
+
+
+
+    $("#add_row").trigger("click");
+    
+    //add choice button click
+    var next = 1;
+    $(".add-more").click(function(e){
+        e.preventDefault();
+        var addto = "#option" + next;
+        var addRemove = "#option" + (next);
+        
+        next = next + 1;
+        console.log(next);
+        var newIn = '<input autocomplete="off" class="input form-control" id="option' + next + '" name="option' + next + '" type="text">';
+        var newInput = $(newIn);
+        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="field"></div>';
+        var removeButton = $(removeBtn);
+        $(addto).after(newInput);
+        $(addRemove).after(removeButton);
+        
+        console.log($(addto));
+        
+        $("#option" + next).attr('data-source',$(addto).attr('data-source'));
+        $("#count").val(next);  
+        
+            $('.remove-me').click(function(e){
+                e.preventDefault();
+                var fieldNum = this.id.charAt(this.id.length-1);
+                var fieldID = "#option" + fieldNum;
+                $(this).remove();
+                $(fieldID).remove();
+            });
+    });
+});
+
+// things to do 
+/*
+1. the add choice button isnt working yet, ref - https://bootsnipp.com/snippets/featured/dynamic-form-fields-add-amp-remove
+2. reduce width of the delete X red button
+3. reduce width of the position column
+*/
+
+</script>
+</body>
+</html> 
