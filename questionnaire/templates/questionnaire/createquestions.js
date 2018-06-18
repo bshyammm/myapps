@@ -1,22 +1,23 @@
 $(document).ready(function() {
+    var tableRowId = 0;
     $("#add_row").on("click", function() {
         // Dynamic Rows Code
 
         // Get max row id and set new id
-        var newid = 0;
-        $.each($("#tab_logic tr"), function() {
-            if (parseInt($(this).data("id")) > newid) {
-                newid = parseInt($(this).data("id"));
+
+        $.each($("#tr"), function() {
+            if (parseInt($(this).data("id")) > tableRowId) {
+                tableRowId = parseInt($(this).data("id"));
             }
         });
-        newid++;
+        tableRowId++;
 
         var tr = $("<tr></tr>", {
-            id: "addr"+newid,
-            "data-id": newid
+            id: "addr"+tableRowId,
+            "data-id": tableRowId
         });
 
-        // loop through each td and create new elements with name of newid
+        // loop through each td and create new elements with name of tableRowId
         $.each($("#tab_logic tbody tr:nth(0) td"), function() {
             var cur_td = $(this);
 
@@ -29,7 +30,7 @@ $(document).ready(function() {
                 });
 
                 var c = $(cur_td).find($(children[0]).prop('tagName')).clone().val("");
-                c.attr("name", $(cur_td).data("name") + newid);
+                c.attr("name", $(cur_td).data("name") + tableRowId);
                 c.appendTo($(td));
                 td.appendTo($(tr));
             } else {
@@ -85,19 +86,22 @@ $(document).ready(function() {
     //add choice button click
     var next = 1;
     $(".add-more").click(function(e){
-        console.log("inside add-more click function")
+        console.log("inside add-more click function");
+        console.log(tableRowId);
         e.preventDefault();
         var addto = "#option" + next;
         var addRemove = "#option" + (next);
 
         next = next + 1;
         console.log(next);
-        var newIn = '<input autocomplete="off" class="input form-control" id="option' + next + '" name="option' + next + '" type="text">';
+        var newIn = '<input class="input-append" id="option' + tableRowId + next + '" name="option' + tableRowId + next + '" type="text" placeholder="Add choice">';
         var newInput = $(newIn);
         var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="field"></div>';
         var removeButton = $(removeBtn);
-        $(addto).after(newInput);
-        $(addRemove).after(removeButton);
+        //$(addto).after(newInput);
+        //$(addRemove).after(removeButton);
+        $(this).before(newInput);
+        $(this).before(removeButton);
 
         console.log($(addto));
 
@@ -107,7 +111,7 @@ $(document).ready(function() {
             $('.remove-me').click(function(e){
                 e.preventDefault();
                 var fieldNum = this.id.charAt(this.id.length-1);
-                var fieldID = "#option" + fieldNum;
+                var fieldID = "#option" + tableRowId + fieldNum;
                 $(this).remove();
                 $(fieldID).remove();
             });
