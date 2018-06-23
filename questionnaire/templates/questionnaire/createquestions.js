@@ -100,9 +100,9 @@ $(document).ready(function() {
         var removeButton = $(removeBtn);
         //$(addto).after(newInput);
         //$(addRemove).after(removeButton);
-        $(this).before(newInput);
         $(this).before(removeButton);
-
+		$(this).before(newInput);        
+		console.log($(this));
         console.log($(addto));
 
         $("#option" + next).attr('data-source',$(addto).attr('data-source'));
@@ -111,6 +111,8 @@ $(document).ready(function() {
             $('.remove-me').click(function(e){
                 e.preventDefault();
                 var fieldNum = this.id.charAt(this.id.length-1);
+				console.log('inside remove me');
+				console.log($(fieldNum));
                 var fieldID = "#option" + tableRowId + fieldNum;
                 $(this).remove();
                 $(fieldID).remove();
